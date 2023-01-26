@@ -15,9 +15,10 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService();
 
+
     componentDidMount() {
         this.updateChar();
-        this.timerId = setInterval(this.updateChar, 30000);
+        // this.timerId = setInterval(this.updateChar, 3000);
     }
 
     componentWillUnmount() {
@@ -28,6 +29,19 @@ class RandomChar extends Component {
         this.setState(({char, loading: false}))
     }
 
+    onClickToUpdate = () => {
+
+        if(this.state.error) {
+            this.setState(({error: false})
+            );
+        } 
+        this.updateChar();
+    }
+    onCharLoading = () => {
+        this.setState({
+            loading: true
+        })
+    }
     onError = () => {
         this.setState({
             loading:false,
@@ -37,6 +51,7 @@ class RandomChar extends Component {
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400-1011000) + 1011000);
+        this.onCharLoading();
         this.marvelService
             .getCharecter(id)
             .then(this.onCharLoaded)
@@ -62,7 +77,7 @@ class RandomChar extends Component {
                     <p className="randomchar__title">
                         Or choose another one
                     </p>
-                    <button className="button button__main">
+                    <button className="button button__main" onClick={() => this.onClickToUpdate()}>
                         <div className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
@@ -74,9 +89,10 @@ class RandomChar extends Component {
 
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char
+    const imageStyle = thumbnail.includes('image_not_available') ? {objectFit: 'contain'} : {objectFit: 'cover'};
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img src={thumbnail} alt="Random character" className="randomchar__img" style={imageStyle}/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">{description}</p>
