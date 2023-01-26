@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -97,6 +98,7 @@ const View = ({char}) => {
                 {comics.length > 0 ? null : "We don't have information about comics with this character"}
                 {
                     comics.map((comics, i) => {
+                        if (i > 9) return null;
                         return (
                             <li key={i} className="char__comics-item">
                                 {comics.name}
@@ -108,5 +110,9 @@ const View = ({char}) => {
             </ul>
         </>
     )
-} 
+}
+
+CharInfo.propTypes = {
+    charId: PropTypes.number
+}
 export default CharInfo;
