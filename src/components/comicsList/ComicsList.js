@@ -36,7 +36,7 @@ const ComicsList = () => {
 
   const renderItems = (arr) => {
     let items = arr.map((comics, i) => {
-      let { name, thumbnail, price, id } = comics;
+      let { name, thumbnail, price} = comics;
       return (
         <li tabIndex={0} className="comics__item" key={i}>
           <img src={thumbnail} alt={name} className="comics__item-img" />
