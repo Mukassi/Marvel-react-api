@@ -1,5 +1,6 @@
 import useMarvelService from "../../services/MarvelService";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./comicsList.scss";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Spinner from "../spinner/Spinner";
@@ -36,12 +37,14 @@ const ComicsList = () => {
 
   const renderItems = (arr) => {
     let items = arr.map((comics, i) => {
-      let { name, thumbnail, price} = comics;
+      let { name, thumbnail, price, id } = comics;
       return (
         <li tabIndex={0} className="comics__item" key={i}>
-          <img src={thumbnail} alt={name} className="comics__item-img" />
-          <div className="comics__item-name">{name}</div>
-          <div className="comics__item-price">{price}</div>
+          <Link to={`/comics/${id}`}>
+            <img src={thumbnail} alt={name} className="comics__item-img" />
+            <div className="comics__item-name">{name}</div>
+            <div className="comics__item-price">{price}</div>
+          </Link>
         </li>
       );
     });
