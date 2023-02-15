@@ -7,23 +7,28 @@ const useMarvelService = () => {
   const _apiKey = "apikey=06f0c861647a8a692ff20cf31e6d0280";
   const _baseOffset = 1235;
 
-  const getAllCharecters = async (offset = _baseOffset) => {
+  const getAllCharacters = async (offset = _baseOffset) => {
     const res = await request(
       `${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`
     );
     return res.data.results.map(_transformCharacter);
   };
 
-  const getAllComics = async (offset = 14) => {
+  const getCharacterByName = async (name) => {
+    const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    return res.data.results.map(_transformCharacter);
+  };
+
+  const getCharacter = async (id) => {
+    const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+    return _transformCharacter(res.data.results[0]);
+  };
+
+  const getAllComics = async (offset = 0) => {
     const res = await request(
       `${_apiBase}comics?orderBy=issueNumber&limit=8&offset=${offset}&${_apiKey}`
     );
     return res.data.results.map(_transformComics);
-  };
-
-  const getCharecter = async (id) => {
-    const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
-    return _transformCharacter(res.data.results[0]);
   };
 
   const getComic = async (id) => {
@@ -31,45 +36,45 @@ const useMarvelService = () => {
     return _transformComics(res.data.results[0]);
   };
 
-  const _transformComics = (data) => {
+  const _transformCharacter = (char) => {
     return {
-      id: data.id,
-      name: data.title,
-      description: data.description
-        ? `${data.description.slice(0, 210)}...`
-        : "There is no description for this comics",
-      pageCount: data.pageCount
-        ? `${data.pageCount} p.`
+      id: char.id,
+      name: char.name,
+      description: char.description
+        ? `${char.description.slice(0, 210)}...`
+        : "There is no description for this character",
+      thumbnail: char.thumbnail.path + "." + char.thumbnail.extension,
+      homepage: char.urls[0].url,
+      wiki: char.urls[1].url,
+      comics: char.comics.items,
+    };
+  };
+
+  const _transformComics = (comics) => {
+    return {
+      id: comics.id,
+      title: comics.title,
+      description: comics.description || "There is no description",
+      pageCount: comics.pageCount
+        ? `${comics.pageCount} p.`
         : "No information about the number of pages",
-      thumbnail: data.thumbnail.path + "." + data.thumbnail.extension,
-      language: data.textObjects[0]?.language || "en-us",
-      price: data.prices[0].price
-        ? `${data.prices[0].price}$`
+      thumbnail: comics.thumbnail.path + "." + comics.thumbnail.extension,
+      language: comics.textObjects[0]?.language || "en-us",
+      price: comics.prices[0].price
+        ? `${comics.prices[0].price}$`
         : "not available",
     };
   };
 
-  const _transformCharacter = (data) => {
-    return {
-      id: data.id,
-      name: data.name,
-      description: data.description
-        ? `${data.description.slice(0, 210)}...`
-        : "There is no description for this character",
-      thumbnail: data.thumbnail.path + "." + data.thumbnail.extension,
-      homepage: data.urls[0].url,
-      wiki: data.urls[1].url,
-      comics: data.comics.items,
-    };
-  };
   return {
     loading,
     error,
-    getAllCharecters,
-    getCharecter,
+    clearError,
+    getAllCharacters,
+    getCharacterByName,
+    getCharacter,
     getAllComics,
     getComic,
-    clearError,
   };
 };
 
